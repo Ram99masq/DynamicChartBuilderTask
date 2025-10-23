@@ -1,0 +1,20 @@
+1) Open up the project in the VS code 
+2) Change the Connectionstring on appsettings.json
+ "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=KPIDashboard;User Id=your_user;Password=your_password;"
+  }
+3) Install the Entity framework to connect to the Sql server and CSV Helper to parse the CSV.
+Use the following .NET CLI command from the operating system's command line to install or update the EF Core SQL Server provider:
+
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+
+dotnet add package CsvHelper --version 33.1.0
+
+4) Run the below command on Commandline or Terminal to update the database on the sql server.
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+
+5) Running the Backend application 
+dotnet run  
+(or)
+Goto Run & debug menu and click to Launch the project code with Chrome or other browsers.
