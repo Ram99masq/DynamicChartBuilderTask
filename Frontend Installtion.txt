@@ -1,0 +1,7 @@
+Front command to run the application.
+2) npm install @mui/material @emotion/react @emotion/styled axios react-chartjs-2 chart.js
+
+  npm install react-chartjs-2 chart.js
+
+
+3) NPM start
