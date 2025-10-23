@@ -30,6 +30,20 @@
             {
                 csv.Context.RegisterClassMap<DetectionMap>();
                 var records = csv.GetRecords<Detection>().ToList();
+
+                // Get all existing IDs from the database
+                var existingIds = _context.Detections
+                    .Select(d => d.Id)
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                // Find duplicates in the incoming CSV
+                var duplicates = records.Where(r => existingIds.Contains(r.Id)).ToList();
+
+                if (duplicates.Any())
+                {
+                    var duplicateIds = string.Join(", ", duplicates.Select(d => d.Id));
+                    throw new Exception($"Duplicate ID(s) found in database or CSV data: {duplicateIds}");
+                }
                 _context.Detections.AddRange(records);
             }
 

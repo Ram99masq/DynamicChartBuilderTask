@@ -19,8 +19,15 @@ namespace kpi_backend.Controllers
         [HttpPost("upload")]
         public async Task<IActionResult> UploadCSV(IFormFile file)
         {
-            await _dataService.ProcessCsvAsync(file);
-            return Ok(new { message = "CSV uploaded successfully." });
+            try
+            {
+                await _dataService.ProcessCsvAsync(file);
+                return Ok(new { message = "CSV uploaded successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
         [HttpPost("compute")]
