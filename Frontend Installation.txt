@@ -1,0 +1,9 @@
+Steps to run the frontend application.
+1) Insall all the react dependencies and chart Js
+npm install @mui/material @emotion/react @emotion/styled axios react-chartjs-2 chart.js
+
+  npm install react-chartjs-2 chart.js
+
+2) Run the frontend application
+
+NPM start
