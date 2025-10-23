@@ -5,6 +5,7 @@
     using kpi_backend.DTO;
     using kpi_backend.Models;
     using Microsoft.Extensions.Options;
+    using System.Diagnostics.Eventing.Reader;
     using System.Formats.Asn1;
     using System.Globalization;
     using System.Text.Json;
@@ -20,10 +21,18 @@
 
         public async Task ProcessCsvAsync(IFormFile file)
         {
-            using var reader = new StreamReader(file.OpenReadStream());
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-            var records = csv.GetRecords<Detection>().ToList();
-            _context.Detections.AddRange(records);
+            //using var reader = new StreamReader(file.OpenReadStream());
+            //using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            //var records = csv.GetRecords<Detection>().ToList();
+
+            using (var reader = new StreamReader(file.OpenReadStream()))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                csv.Context.RegisterClassMap<DetectionMap>();
+                var records = csv.GetRecords<Detection>().ToList();
+                _context.Detections.AddRange(records);
+            }
+
             await _context.SaveChangesAsync();
         }
 

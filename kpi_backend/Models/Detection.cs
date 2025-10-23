@@ -1,4 +1,7 @@
-﻿namespace kpi_backend.Models
+﻿using CsvHelper.Configuration;
+using System.Diagnostics.Eventing.Reader;
+
+namespace kpi_backend.Models
 {
     public class Detection
     {
@@ -12,6 +15,23 @@
         public bool Vest { get; set; }
         public string Zone { get; set; }
         public string EventType { get; set; }
+    }
+
+    public sealed class DetectionMap : ClassMap<Detection>
+    {
+        public DetectionMap()
+        {
+            Map(m => m.Id).Name("id");
+            Map(m => m.Class).Name("class");
+            Map(m => m.X).Name("x");
+            Map(m => m.Y).Name("y");
+            Map(m => m.Timestamp).Name("timestamp");
+            Map(m => m.Speed).Name("speed");
+            Map(m => m.Heading).Name("heading");
+            Map(m => m.Vest).Name("vest");
+            Map(m => m.Zone).Name("zone");
+            Map(m => m.EventType).Name("event_type"); 
+        }
     }
 
 }
