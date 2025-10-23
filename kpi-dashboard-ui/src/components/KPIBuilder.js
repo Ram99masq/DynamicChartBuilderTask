@@ -2,25 +2,22 @@ import React, { useState } from "react";
 import {
   Box, Button, Select, MenuItem, FormControl, InputLabel, Typography
 } from "@mui/material";
-import axios from "axios";
 import ChartView from "./ChartView";
 
-const KPIBuilder = () => {
+const KPIBuilder = ({ onGenerate, kpiData }) => {
   const [metric, setMetric] = useState("count");
   const [eventType, setEventType] = useState("close_call");
   const [groupBy, setGroupBy] = useState(["zone"]);
   const [chartType, setChartType] = useState("bar");
-  const [data, setData] = useState([]);
 
-  const fetchKPI = async () => {
+  const handleGenerate = () => {
     const payload = {
       metric,
       filters: { eventType },
       groupBy,
       chartType,
     };
-    const res = await axios.post("/api/kpi/compute", payload);
-    setData(res.data);
+    onGenerate(payload);
   };
 
   return (
@@ -54,11 +51,11 @@ const KPIBuilder = () => {
         </Select>
       </FormControl>
 
-      <Button variant="contained" onClick={fetchKPI} sx={{ mt: 2 }}>
+      <Button variant="contained" onClick={handleGenerate} sx={{ mt: 2 }}>
         Generate KPI
       </Button>
 
-      <ChartView chartType={chartType} data={data} />
+      <ChartView chartType={chartType} data={kpiData} />
     </Box>
   );
 };
