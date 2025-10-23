@@ -3,6 +3,7 @@ import { Container, Typography } from "@mui/material";
 import UploadCSV from "./components/UploadCSV";
 import PresetManager from "./components/PresetManager";
 import KPIBuilder from "./components/KPIBuilder";
+import api from  "./components/api";
 
 function App() {
   const [currentKPI, setCurrentKPI] = useState(null);
@@ -10,7 +11,7 @@ function App() {
 
   const fetchKPI = async (kpiConfig) => {
     setCurrentKPI(kpiConfig);
-    const res = await fetch("/api/kpi/compute", {
+    const res = await api.post("/compute", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(kpiConfig),

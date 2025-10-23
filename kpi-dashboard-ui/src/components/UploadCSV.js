@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Box, Typography } from "@mui/material";
 import axios from "axios";
+import api from "./api";
 
 const UploadCSV = () => {
   const [file, setFile] = useState(null);
@@ -8,7 +9,9 @@ const UploadCSV = () => {
   const upload = async () => {
     const formData = new FormData();
     formData.append("file", file);
-    await axios.post("/api/kpi/upload", formData);
+    console.log(file);
+    await api.post("/upload", formData);
+
     alert("CSV uploaded successfully");
   };
 

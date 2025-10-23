@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "./api"
 import {
   Box,
   Typography,
@@ -23,7 +24,7 @@ const PresetManager = ({ currentKPI, onApplyPreset }) => {
 
   const fetchPresets = async () => {
     try {
-      const res = await axios.get("/api/kpi/presets");
+      const res = await api.get("/presets");
       setPresets(res.data);
     } catch (err) {
       console.error("Failed to load presets", err);
@@ -41,7 +42,7 @@ const PresetManager = ({ currentKPI, onApplyPreset }) => {
         ...currentKPI,
         name: presetName || "Unnamed Preset",
       };
-      await axios.post("/api/kpi/presets", payload);
+      await api.post("/presets", payload);
       setPresetName("");
       fetchPresets();
       alert("Preset saved!");
