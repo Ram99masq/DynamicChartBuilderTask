@@ -1,14 +1,21 @@
-import React, { useState } from "react";
+import React, { useRef,useState } from "react";
 import { Button, Box, Typography , Snackbar, Alert } from "@mui/material";
 import { uploadCSV } from "./api";
 
 const UploadCSV = () => {
   const [file, setFile] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
-  
+    const fileInputRef = useRef();
 
   const showSnackbar = (message, severity = "info") => {
     setSnackbar({ open: true, message, severity });
+  };
+
+    const handleReset = () => {
+    setFile(null); 
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; 
+    }
   };
 
   const handleUpload = async () => {
@@ -18,14 +25,12 @@ const UploadCSV = () => {
   }
   try {
     const result = await uploadCSV(file);
-    alert(result);
     showSnackbar(result.message || "Upload successful", "success");
+   handleReset();
   } catch (err) {
     const errorMsg =
       err.response?.data?.error || err.response?.data?.message || err.message || "Upload failed";
     showSnackbar(errorMsg, "error");
-       alert(err);
-
   }
 };
 
@@ -34,6 +39,7 @@ const UploadCSV = () => {
       <Typography variant="h6">Upload Detection CSV</Typography>
       <input
         type="file"
+         ref={fileInputRef}
         accept=".csv"
         onChange={(e) => setFile(e.target.files[0])}
         style={{ marginTop: "8px" }}

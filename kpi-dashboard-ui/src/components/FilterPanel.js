@@ -32,18 +32,19 @@ const FilterPanel = ({ filters, setFilters }) => (
     })
   }
   fullWidth sx={{ mb: 2 }} />
-    <TextField
-      label="Class (comma-separated)"
-      value={filters.class || ""}
-      onChange={(e) => setFilters({ ...filters, class: e.target.value })}
-      fullWidth sx={{ mb: 2 }}
-    />
-    <TextField
-      label="Zones"
-      value={filters.zone || ""}
-      onChange={(e) => setFilters({ ...filters, zone: e.target.value })}
-      fullWidth sx={{ mb: 2 }}
-    />
+<TextField
+  label="Class"
+  value={filters.class?.join(", ") || ""}
+  onChange={(e) => setFilters({ ...filters, class: e.target.value.split(",").map(c => c.trim()).filter(Boolean) })}
+  fullWidth sx={{ mb: 2 }}
+/>
+
+<TextField
+  label="Zone"
+  value={filters.zone?.join(", ") || ""}
+  onChange={(e) => setFilters({ ...filters, zone: e.target.value.split(",").map(z => z.trim()).filter(Boolean) })}
+  fullWidth sx={{ mb: 2 }}
+/>
     <Typography gutterBottom>Speed Threshold</Typography>
     <Slider
        value={filters.speed ? [filters.speed.min || 0, filters.speed.max || 10] : [0, 10]}
