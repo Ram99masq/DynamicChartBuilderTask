@@ -1,15 +1,17 @@
-﻿namespace kpi_backend.Services
-{
-    using CsvHelper;
-    using kpi_backend.Data;
-    using kpi_backend.DTO;
-    using kpi_backend.Models;
-    using Microsoft.Extensions.Options;
-    using System.Diagnostics.Eventing.Reader;
-    using System.Formats.Asn1;
-    using System.Globalization;
-    using System.Text.Json;
+﻿using CsvHelper;
+using kpi_backend.Data;
+using kpi_backend.DTO;
+using kpi_backend.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using System.Text;
+using System.Text.Json;
 
+namespace kpi_backend.Services
+{
     public class DataService : IDataService
     {
         private readonly AppDbContext _context;
@@ -21,9 +23,28 @@
 
         public async Task ProcessCsvAsync(IFormFile file)
         {
-            //using var reader = new StreamReader(file.OpenReadStream());
-            //using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-            //var records = csv.GetRecords<Detection>().ToList();
+            //    using var reader = new StreamReader(file.OpenReadStream());
+            //    using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            //    var records = csv.GetRecords<Detection>().ToList();
+
+            //    var existingIds = await _context.Detections
+            //        .Select(d => d.Id)
+            //        .ToListAsync();
+
+            //    var duplicates = records
+            //        .Where(r => existingIds.Contains(r.Id, StringComparer.OrdinalIgnoreCase))
+            //        .Select(r => r.Id)
+            //        .Distinct()
+            //        .ToList();
+
+            //    if (duplicates.Any())
+            //    {
+            //        var duplicateList = string.Join(", ", duplicates);
+            //        throw new Exception($"Duplicate ID(s) found in database: {duplicateList}");
+            //    }
+
+            //    _context.Detections.AddRange(records);
+            //    await _context.SaveChangesAsync();
 
             using (var reader = new StreamReader(file.OpenReadStream()))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
@@ -50,57 +71,214 @@
             await _context.SaveChangesAsync();
         }
 
-        public List<Dictionary<string, object>> ComputeKPI(KPIRequest request)
+        public async Task<List<Detection>> ComputeKPIAsync(KPIRequest request)
         {
-            var query = _context.Detections.AsQueryable();
+            //Linq code starts
+            //var query = _context.Detections.AsQueryable();
 
-            if (request.Filters != null)
+            //// Apply filters
+            //var f = request.Filters;
+            //if (f != null)
+            //{
+            //    if (f.Class?.Any() == true)
+            //        query = query.Where(d => f.Class.Contains(d.Class));
+
+            //    if (f.Zone?.Any() == true)
+            //        query = query.Where(d => f.Zone.Contains(d.Zone));
+
+            //    if (f.Vest != null)
+            //        query = query.Where(d => d.Vest == f.Vest);
+
+            //    if (f.Speed?.Min.HasValue == true)
+            //        query = query.Where(d => d.Speed >= f.Speed.Min.Value);
+
+            //    if (f.Speed?.Max.HasValue == true)
+            //        query = query.Where(d => d.Speed <= f.Speed.Max.Value);
+
+            //    if (f.Heading?.Min.HasValue == true && f.Heading.Max.HasValue == true)
+            //        query = query.Where(d => d.Heading >= f.Heading.Min.Value && d.Heading <= f.Heading.Max.Value);
+
+            //    if (f.TimeRange?.Start != null)
+            //        query = query.Where(d => d.Timestamp >= f.TimeRange.Start);
+
+            //    if (f.TimeRange?.End != null)
+            //        query = query.Where(d => d.Timestamp <= f.TimeRange.End);
+            //}
+
+            //// Grouping keys
+            //bool groupByTime = request.GroupBy?.Contains("timestamp_bucket") == true;
+            //bool groupByClass = request.GroupBy?.Contains("class") == true;
+            //bool groupByZone = request.GroupBy?.Contains("zone") == true;
+            //bool groupById = request.GroupBy?.Contains("id") == true;
+
+            //var grouped = query
+            //     .AsEnumerable() // ✅ Forces client-side evaluation for GroupBy
+            //     .GroupBy(d => new
+            //     {
+            //         TimeBucket = groupByTime
+            //             ? (DateTime?)new DateTime(
+            //                 d.Timestamp.Year,
+            //                 d.Timestamp.Month,
+            //                 d.Timestamp.Day,
+            //                 d.Timestamp.Hour,
+            //                 (d.Timestamp.Minute / (request.BucketIntervalMinutes ?? 5)) * (request.BucketIntervalMinutes ?? 5),
+            //                 0)
+            //             : null, // ✅ Cast ensures both branches return DateTime?
+            //         Class = groupByClass ? d.Class : null,
+            //         Zone = groupByZone ? d.Zone : null,
+            //         Id = groupById ? d.Id : null
+            //     });
+
+
+            //var result = grouped
+            //    .AsEnumerable()
+            //    .Select(g => new KPIResult
+            //    {
+            //        TimeBucket = g.Key.TimeBucket,
+            //        Class = g.Key.Class,
+            //        Zone = g.Key.Zone,
+            //        Id = g.Key.Id,
+            //        Value = request.Metric switch
+            //        {
+            //            "count" => g.Count(),
+            //            "unique_ids" => g.Select(x => x.Id).Distinct().Count(),
+            //            "rate_per_hour" => g.Count() / Math.Max(1, (g.Max(x => x.Timestamp) - g.Min(x => x.Timestamp)).TotalHours),
+            //            "avg_speed" => g.Average(x => x.Speed),
+            //            "vest_compliance" => g.Average(x => (double)x.Vest),
+            //            _ => 0
+            //        }
+            //    })
+            //    .ToList();
+
+            //return result;
+            //End linq code
+            var results = new List<Detection>();
+
+            try
             {
-                var f = request.Filters;
-                if (f.ContainsKey("eventType"))
-                    query = query.Where(d => d.EventType == f["eventType"].ToString());
-                if (f.ContainsKey("class"))
-                    //query = query.Where(d => f["class"].ToString().Split(',').Contains(d.Class));
-                query = query.Where(d => ("," + f["class"] + ",").Contains("," + d.Class + ","));
+                var metric = request.Metric.ToLower();
+                var bucket = request.BucketIntervalMinutes ?? 5;
 
-            }
+                var sqlBuilder = new StringBuilder();
+                sqlBuilder.AppendLine("SELECT");
 
+                // Grouping columns
+                sqlBuilder.AppendLine(request.GroupBy.Contains("timestamp_bucket")
+                    ? $"DATEADD(MINUTE, (DATEDIFF(MINUTE, 0, timestamp) / {bucket}) * {bucket}, 0) AS TimeBucket,"
+                    : "NULL AS TimeBucket,");
+                sqlBuilder.AppendLine(@"[Id]
+                      ,[Class]
+                      ,[X]
+                      ,[Y]
+                      ,[Timestamp]
+                      ,[Speed]
+                      ,[Heading]
+                      ,CAST([Vest] AS INT) AS [Vest]
+                      ,[Zone]
+                      ,[EventType],");
 
-
-            var data = query.ToList();
-            var result = new List<Dictionary<string, object>>();
-
-            if (request.GroupBy != null && request.GroupBy.Any())
-            {
-                var groupKey = request.GroupBy.First();
-                var grouped = data.GroupBy(d => d.GetType().GetProperty(groupKey)?.GetValue(d, null));
-
-                foreach (var group in grouped)
+                // Metric logic
+                sqlBuilder.AppendLine(metric switch
                 {
-                    result.Add(new Dictionary<string, object>
-                {
-                    { group.Key?.ToString() ?? "Total", group.Count() }
+                    "count" => " CAST(COUNT(*)  AS INT) AS [Count]",
+                    "unique_ids" => " CAST(COUNT(DISTINCT id) AS INT) AS [Count]",
+                    "avg_speed" => "CAST(AVG(speed) AS INT) AS [Count]",
+                    "rate_per_hour" => $"CAST( COUNT(*) / ({bucket} / 60.0) AS INT) AS [Count]",
+                    "vest_compliance" => "CAST(COUNT(*) AS INT) FILTER (WHERE class = 'human' AND vest = 0) AS [Count]",
+                    "overspeed" => "CAST(COUNT(*) AS INT) FILTER (WHERE speed > 1.5) AS [Count]",
+                    _ => "0 AS [Count]"
                 });
-                }
-            }
-            else
-            {
-                result.Add(new Dictionary<string, object> { { "Total", data.Count } });
-            }
 
-            return result;
+                sqlBuilder.AppendLine("FROM Detections");
+                sqlBuilder.AppendLine($"WHERE timestamp BETWEEN '{request.Filters.TimeRange.Start}' AND '{request.Filters.TimeRange.End}'");
+
+                // Optional filters
+                if (request.Filters.Class?.Any() == true)
+                {
+                    var classValues = string.Join(",", request.Filters.Class.Select(c => $"'{c}'"));
+                    sqlBuilder.AppendLine($"AND class IN ({classValues})");
+                }
+
+                if (request.Filters.Zone?.Any() == true)
+                {
+                    var zoneValues = string.Join(",", request.Filters.Zone.Select(z => $"'{z}'"));
+                    sqlBuilder.AppendLine($"AND zone IN ({zoneValues})");
+                }
+
+                if (request.Filters.Vest != null)
+                {
+                    sqlBuilder.AppendLine($"AND vest = {request.Filters.Vest.Value}");
+                }
+
+                if (request.Filters.Speed?.Min != null)
+                {
+                    sqlBuilder.AppendLine($"AND speed >= {request.Filters.Speed.Min.Value}");
+                }
+
+                if (request.Filters.Speed?.Max != null)
+                {
+                    sqlBuilder.AppendLine($"AND speed <= {request.Filters.Speed.Max.Value}");
+                }
+
+                if (request.Filters.Heading?.Min != null && request.Filters.Heading?.Max != null)
+                {
+                    sqlBuilder.AppendLine($"AND heading BETWEEN {request.Filters.Heading.Min.Value} AND {request.Filters.Heading.Max.Value}");
+                }
+
+                sqlBuilder.AppendLine(@$"GROUP BY DATEADD(MINUTE, (DATEDIFF(MINUTE, 0, timestamp) / {bucket}) * {bucket}, 0) ,  [Id]
+                          ,[Class]
+	                      ,[Zone]
+                          ,[X]
+                          ,[Y]
+                          ,[Timestamp]
+                          ,[Speed]
+                          ,[Heading]
+                          ,[Vest]
+                          ,[EventType] ");
+
+                var sql = sqlBuilder.ToString();
+
+                results = await _context.Detections
+                    .FromSqlRaw(sql)
+                    .ToListAsync();
+
+                return results;
+            }
+            catch (Exception ex)
+            {
+                // Log error if needed
+                return new List<Detection> {
+            new Detection {
+                EventType = "",
+                Class = "error",
+                Zone = "",
+                Id = ""
+                }
+            };
+            }
         }
 
         public void SavePreset(KPIRequest request)
         {
+            if (string.IsNullOrWhiteSpace(request.Name))
+                throw new Exception("Preset name is required.");
+
+            if (string.IsNullOrWhiteSpace(request.Metric))
+                throw new Exception("Metric is required.");
+
+            bool exists = _context.KPIPresets.Any(p => p.Name == request.Name);
+            if (exists)
+                throw new Exception($"Preset with name '{request.Name}' already exists.");
+
             var preset = new KPIPreset
             {
-                Name = request.Name ?? "Unnamed Preset",
+                Name = request.Name,
                 Metric = request.Metric,
-                Filters = JsonSerializer.Serialize(request.Filters),
-                GroupBy = JsonSerializer.Serialize(request.GroupBy),
-                ChartType = request.ChartType
+                Filters = JsonSerializer.Serialize(request.Filters ?? new Filters()),
+                GroupBy = JsonSerializer.Serialize(request.GroupBy ?? new List<string>()),
+                ChartType = request.ChartType ?? "bar"
             };
+
             _context.KPIPresets.Add(preset);
             _context.SaveChanges();
         }
@@ -110,5 +288,4 @@
             return _context.KPIPresets.ToList();
         }
     }
-
 }

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Container, Typography } from "@mui/material";
 import UploadCSV from "./components/UploadCSV";
-import PresetManager from "./components/PresetManager";
 import KPIBuilder from "./components/KPIBuilder";
 import api from  "./components/api";
 
@@ -27,7 +26,6 @@ function App() {
       </Typography>
       <UploadCSV />
       <KPIBuilder onGenerate={fetchKPI} kpiData={kpiData} />
-      <PresetManager currentKPI={currentKPI} onApplyPreset={fetchKPI} />
     </Container>
   );
 }

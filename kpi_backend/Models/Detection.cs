@@ -12,10 +12,13 @@ namespace kpi_backend.Models
         public DateTime Timestamp { get; set; }
         public float Speed { get; set; }
         public float Heading { get; set; }
-        public bool Vest { get; set; }
+        public int Vest { get; set; }
         public string Zone { get; set; }
         public string EventType { get; set; }
+        public int Count { get; set; }
+        public DateTime TimeBucket { get; set; }
     }
+
 
     public sealed class DetectionMap : ClassMap<Detection>
     {

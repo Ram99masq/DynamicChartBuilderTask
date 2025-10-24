@@ -30,26 +30,51 @@ namespace kpi_backend.Controllers
             }
         }
 
+
         [HttpPost("compute")]
-        public IActionResult ComputeKPI([FromBody] KPIRequest request)
+        public async Task<IActionResult> ComputeKPI([FromBody] KPIRequest request)
         {
-            var result = _dataService.ComputeKPI(request);
-            return Ok(result);
+            try
+            {
+                var result = await _dataService.ComputeKPIAsync(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
         [HttpPost("presets")]
         public IActionResult SavePreset([FromBody] KPIRequest request)
         {
-            _dataService.SavePreset(request);
-            return Ok(new { message = "Preset saved." });
+            try
+            {
+                _dataService.SavePreset(request);
+                return Ok(new { message = "Preset saved successfully." });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("already exists"))
+                    return Conflict(new { error = ex.Message });
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
         [HttpGet("presets")]
         public IActionResult GetPresets()
         {
-            var presets = _dataService.GetPresets();
-            return Ok(presets);
+            try
+            {
+                var presets = _dataService.GetPresets();
+                return Ok(presets);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
         }
     }
+
 
 }
