@@ -1,4 +1,5 @@
 ﻿using CsvHelper.Configuration;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.Eventing.Reader;
 
 namespace kpi_backend.Models
@@ -15,8 +16,12 @@ namespace kpi_backend.Models
         public int Vest { get; set; }
         public string Zone { get; set; }
         public string EventType { get; set; }
+
+        [NotMapped]
         public int Count { get; set; }
-        public DateTime TimeBucket { get; set; }
+
+        [NotMapped]
+        public string TimeBucket { get; set; }
     }
 
 
@@ -34,6 +39,8 @@ namespace kpi_backend.Models
             Map(m => m.Vest).Name("vest");
             Map(m => m.Zone).Name("zone");
             Map(m => m.EventType).Name("event_type"); 
+            //Map(m => m.Count).Name("Count");
+            //Map(m => m.TimeBucket).Name("TimeBucket");
         }
     }
 

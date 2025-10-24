@@ -45,30 +45,35 @@ namespace kpi_backend.Services
 
             //    _context.Detections.AddRange(records);
             //    await _context.SaveChangesAsync();
-
-            using (var reader = new StreamReader(file.OpenReadStream()))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            try
             {
-                csv.Context.RegisterClassMap<DetectionMap>();
-                var records = csv.GetRecords<Detection>().ToList();
-
-                // Get all existing IDs from the database
-                var existingIds = _context.Detections
-                    .Select(d => d.Id)
-                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-                // Find duplicates in the incoming CSV
-                var duplicates = records.Where(r => existingIds.Contains(r.Id)).ToList();
-
-                if (duplicates.Any())
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
-                    var duplicateIds = string.Join(", ", duplicates.Select(d => d.Id));
-                    throw new Exception($"Duplicate ID(s) found in database or CSV data: {duplicateIds}");
-                }
-                _context.Detections.AddRange(records);
-            }
+                    csv.Context.RegisterClassMap<DetectionMap>();
+                    var records = csv.GetRecords<Detection>().ToList();
 
-            await _context.SaveChangesAsync();
+                    // Get all existing IDs from the database
+                    var existingIds = _context.Detections
+                        .Select(d => d.Id)
+                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                    // Find duplicates in the incoming CSV
+                    var duplicates = records.Where(r => existingIds.Contains(r.Id)).ToList();
+
+                    if (duplicates.Any())
+                    {
+                        var duplicateIds = string.Join(", ", duplicates.Select(d => d.Id));
+                        throw new Exception($"Duplicate ID(s) found in database or CSV data: {duplicateIds}");
+                    }
+                    _context.Detections.AddRange(records);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
         public async Task<List<Detection>> ComputeKPIAsync(KPIRequest request)
