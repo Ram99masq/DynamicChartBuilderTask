@@ -10,9 +10,11 @@ import ScatterSpeedHeading from "./charts/ScatterSpeedHeading";
 import { computeKPI } from "./api"; // ✅ Make sure this is implemented
 
 const KPIBuilder = () => {
+
+  const [name, setName] = useState("Custom KPI");
   const [metric, setMetric] = useState("count");
   const [filters, setFilters] = useState({
-    timeRange: {
+    time_range: {
       start: "2023-10-01T08:00:00",
       end: "2023-10-01T09:00:00"
     },
@@ -29,14 +31,18 @@ const KPIBuilder = () => {
 
   const handleGenerate = async () => {
     const payload = {
+      name,
       metric,
       filters,
-      groupBy,
-      bucketIntervalMinutes
+      group_by: groupBy,
+      bucket_interval_minutes: bucketIntervalMinutes,
+      chart_type: chartType
     };
 
     try {
       console.log(payload);
+      const jsonString = JSON.stringify(payload, null, 2);
+      console.log(jsonString);
       const result = await computeKPI(payload);
       setData(result);
     } catch (err) {
