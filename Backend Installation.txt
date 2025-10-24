@@ -1,9 +1,12 @@
 1) Open up the project in the VS code 
+
 2) Change the Connectionstring on appsettings.json using Username/password or Windows authentication
+
   a. Using Username and password for connecting to Database
  "ConnectionStrings": {
     "SqlDBConnection": "Server=localhost;Database=KPIDashboard;User Id=your_user;Password=your_password;"
   }
+
   b. Using windows authentication include attributes such as Trusted_Connection=True;TrustServerCertificate=True
  "ConnectionStrings": {
    "SqlDBConnection": "Server=DESKTOP-AEA61L5;Database=KPIDashboard;Trusted_Connection=True;TrustServerCertificate=True;"
@@ -19,8 +22,10 @@ dotnet add package CsvHelper --version 33.1.0
 4) Run the below command on Commandline or Terminal to update the database on the sql server.
 a. Install the Cli tool to run the commands
 dotnet tool install --global dotnet-ef 
+
 b. Install the packages
 dotnet add package Microsoft.EntityFrameworkCore.Design --version 9.0.10
+
 c. Create the table using entity framework and update the database.
 dotnet ef migrations add InitialCreate
 dotnet ef database update
