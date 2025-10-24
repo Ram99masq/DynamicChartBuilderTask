@@ -2,6 +2,7 @@
 using kpi_backend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace kpi_backend.Services
 {
@@ -17,14 +18,15 @@ namespace kpi_backend.Services
         /// Computes KPI results based on the provided request.
         /// </summary>
         Task<List<Detection>> ComputeKPIAsync(KPIRequest request);
-       
+
 
 
         /// <summary>
         /// Saves a KPI preset to the database.
         /// Throws an exception if the name already exists or required fields are missing.
         /// </summary>
-        void SavePreset(KPIRequest request);
+        Task SavePresetAsync(KPIRequest request, string name);
+
 
         /// <summary>
         /// Retrieves all saved KPI presets.

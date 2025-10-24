@@ -4,6 +4,7 @@ namespace kpi_backend.Controllers
     using kpi_backend.DTO;
     using kpi_backend.Services;
     using Microsoft.AspNetCore.Mvc;
+    using System.Text.Json;
 
     [ApiController]
     [Route("api/kpi")]
@@ -46,18 +47,20 @@ namespace kpi_backend.Controllers
         }
 
         [HttpPost("presets")]
-        public IActionResult SavePreset([FromBody] KPIRequest request)
+        public async Task<IActionResult> SavePreset([FromBody] KPIRequest request,string name)
         {
             try
             {
-                _dataService.SavePreset(request);
+                 await _dataService.SavePresetAsync(request,name);
                 return Ok(new { message = "Preset saved successfully." });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
             }
             catch (Exception ex)
             {
-                if (ex.Message.Contains("already exists"))
-                    return Conflict(new { error = ex.Message });
-                return BadRequest(new { error = ex.Message });
+                return StatusCode(500, new { error = "Internal server error", details = ex.Message });
             }
         }
 

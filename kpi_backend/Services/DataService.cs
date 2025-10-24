@@ -71,8 +71,9 @@ namespace kpi_backend.Services
 
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
+                throw;
             }
         }
 
@@ -263,29 +264,23 @@ namespace kpi_backend.Services
             }
         }
 
-        public void SavePreset(KPIRequest request)
+        public async Task SavePresetAsync(KPIRequest request, string name)
         {
-            if (string.IsNullOrWhiteSpace(request.Name))
-                throw new Exception("Preset name is required.");
 
-            if (string.IsNullOrWhiteSpace(request.Metric))
-                throw new Exception("Metric is required.");
-
-            bool exists = _context.KPIPresets.Any(p => p.Name == request.Name);
-            if (exists)
-                throw new Exception($"Preset with name '{request.Name}' already exists.");
-
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("Preset name is required.");
+            }
+            var jsonString = JsonSerializer.Serialize(request);
             var preset = new KPIPreset
             {
-                Name = request.Name,
-                Metric = request.Metric,
-                Filters = JsonSerializer.Serialize(request.Filters ?? new Filters()),
-                GroupBy = JsonSerializer.Serialize(request.GroupBy ?? new List<string>()),
-                ChartType = request.ChartType ?? "bar"
+                Name = name,
+                JsonPayload = jsonString,
+                CreatedAt = DateTime.Now
             };
 
             _context.KPIPresets.Add(preset);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         public List<KPIPreset> GetPresets()

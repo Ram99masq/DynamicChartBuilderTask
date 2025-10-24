@@ -10,8 +10,6 @@ namespace kpi_backend.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         public DbSet<Detection> Detections { get; set; }
         public DbSet<KPIPreset> KPIPresets { get; set; }
-        public DbSet<KPIResult> KPIResults { get; set; } // Not mapped to a real table
 
     }
-
 }
