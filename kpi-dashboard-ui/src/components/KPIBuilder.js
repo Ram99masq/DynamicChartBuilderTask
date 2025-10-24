@@ -7,7 +7,8 @@ import ChartTypeSelector from "./ChartTypeSelector";
 import TimeSeriesChart from "./charts/TimeSeriesChart";
 import BarChartByClass from "./charts/BarChartByClass";
 import ScatterSpeedHeading from "./charts/ScatterSpeedHeading";
-import { computeKPI } from "./api"; // ✅ Make sure this is implemented
+import { computeKPI } from "./api"; 
+import SavePresetPanel from "./SavePresetPanel";
 
 const KPIBuilder = () => {
 
@@ -41,8 +42,8 @@ const KPIBuilder = () => {
 
     try {
       console.log(payload);
-      const jsonString = JSON.stringify(payload, null, 2);
-      console.log(jsonString);
+      //const jsonString = JSON.stringify(payload, null, 2);
+      //console.log(jsonString);
       const result = await computeKPI(payload);
       setData(result);
     } catch (err) {
@@ -66,7 +67,17 @@ const KPIBuilder = () => {
         {chartType === "bar" && <BarChartByClass data={data} />}
         {chartType === "scatter" && <ScatterSpeedHeading data={data} />}
       </Box>
+
+   <SavePresetPanel currentPayload={{
+      name,
+      metric,
+      filters,
+      group_by: groupBy,
+      bucket_interval_minutes: bucketIntervalMinutes,
+      chart_type: chartType }} />
+
     </Box>
+    
   );
 };
 

@@ -33,9 +33,19 @@ export const computeKPI = async (request) => {
 };
 
 // 💾 Save KPI preset
-export const savePreset = async (request) => {
-  const response = await api.post("/presets", request);
+export const savePreset = async (request,name) => {
+  try {
+  const response = await api.post("/presets?name="+name, request, {
+   headers: {
+    "Content-Type": "application/json"
+      },
+      });
   return response.data;
+    } catch (error) {
+    console.error("Error calling /compute:", error);
+    throw error;
+  }
+
 };
 
 // 📂 Get all saved presets
