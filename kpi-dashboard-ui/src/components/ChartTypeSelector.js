@@ -7,8 +7,6 @@ const ChartTypeSelector = ({ chartType, setChartType }) => (
       <MenuItem value="bar">Bar</MenuItem>
       <MenuItem value="line">Line</MenuItem>
       <MenuItem value="area">Area</MenuItem>
-      <MenuItem value="heatmap">Heatmap</MenuItem>
-      <MenuItem value="table">Table</MenuItem>
     </Select>
   </FormControl>
 );

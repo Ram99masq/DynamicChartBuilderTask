@@ -8,7 +8,7 @@ const GroupBySelector = ({ groupBy, setGroupBy }) => (
       value={groupBy}
       onChange={(e) => setGroupBy(e.target.value)}
     >
-      <MenuItem value="time_bucket">Time Bucket</MenuItem>
+      <MenuItem value="timestamp_bucket">Time Bucket</MenuItem>
       <MenuItem value="class">Class</MenuItem>
       <MenuItem value="zone">Zone</MenuItem>
       <MenuItem value="id">Asset ID</MenuItem>

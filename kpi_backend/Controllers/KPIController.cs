@@ -35,6 +35,8 @@ namespace kpi_backend.Controllers
         [HttpPost("compute")]
         public async Task<IActionResult> ComputeKPI([FromBody] KPIRequest request)
         {
+            if (request.Filters?.TimeRange == null)
+                return BadRequest("Time range is required.");
             try
             {
                 var result = await _dataService.ComputeKPIAsync(request);
@@ -47,11 +49,11 @@ namespace kpi_backend.Controllers
         }
 
         [HttpPost("presets")]
-        public async Task<IActionResult> SavePreset([FromBody] KPIRequest request,string name)
+        public async Task<IActionResult> SavePreset([FromBody] KPIRequest request, string name)
         {
             try
             {
-                 await _dataService.SavePresetAsync(request,name);
+                await _dataService.SavePresetAsync(request, name);
                 return Ok(new { message = "Preset saved successfully." });
             }
             catch (ArgumentException ex)

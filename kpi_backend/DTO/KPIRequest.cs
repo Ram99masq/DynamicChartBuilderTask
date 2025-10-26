@@ -1,4 +1,5 @@
-﻿using System;
+﻿using kpi_backend.Models;
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -6,6 +7,7 @@ namespace kpi_backend.DTO
 {
     public class KPIRequest
     {
+
         public string Name { get; set; } = "";
 
         [JsonPropertyName("metric")]

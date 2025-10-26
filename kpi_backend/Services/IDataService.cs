@@ -17,7 +17,7 @@ namespace kpi_backend.Services
         /// <summary>
         /// Computes KPI results based on the provided request.
         /// </summary>
-        Task<List<Detection>> ComputeKPIAsync(KPIRequest request);
+        Task<ChartBundleDto> ComputeKPIAsync(KPIRequest request);
 
 
 

@@ -5,15 +5,11 @@
 namespace kpi_backend.Migrations
 {
     /// <inheritdoc />
-    public partial class RemovePrimaryKeyFromDetections : Migration
+    public partial class AddRowIdToDetection : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropPrimaryKey(
-         name: "PK_Detections",
-         table: "Detections");
-
             // Step 1: Add RowId column (nullable initially to avoid constraint failure)
             migrationBuilder.AddColumn<Guid>(
                 name: "RowId",
@@ -43,10 +39,7 @@ namespace kpi_backend.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddPrimaryKey(
-              name: "PK_Detections",
-              table: "Detections",
-              column: "Id");
+
         }
     }
 }

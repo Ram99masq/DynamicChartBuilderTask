@@ -6,6 +6,7 @@ namespace kpi_backend.Models
 {
     public class Detection
     {
+        public Guid RowId { get; set; }
         public string Id { get; set; }
         public string Class { get; set; }
         public float X { get; set; }
