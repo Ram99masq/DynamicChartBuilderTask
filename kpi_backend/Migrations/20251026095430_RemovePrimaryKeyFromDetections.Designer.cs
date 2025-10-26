@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using kpi_backend.Data;
 
@@ -11,9 +12,11 @@ using kpi_backend.Data;
 namespace kpi_backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251026095430_RemovePrimaryKeyFromDetections")]
+    partial class RemovePrimaryKeyFromDetections
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,6 +27,9 @@ namespace kpi_backend.Migrations
 
             modelBuilder.Entity("kpi_backend.Models.Detection", b =>
                 {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Class")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -34,9 +40,6 @@ namespace kpi_backend.Migrations
 
                     b.Property<float>("Heading")
                         .HasColumnType("real");
-
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("Speed")
                         .HasColumnType("real");
@@ -57,7 +60,9 @@ namespace kpi_backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Detections", (string)null);
+                    b.HasKey("Id");
+
+                    b.ToTable("Detections");
                 });
 
             modelBuilder.Entity("kpi_backend.Models.KPIPreset", b =>

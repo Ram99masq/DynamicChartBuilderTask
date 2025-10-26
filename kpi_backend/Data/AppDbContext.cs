@@ -11,5 +11,14 @@ namespace kpi_backend.Data
         public DbSet<Detection> Detections { get; set; }
         public DbSet<KPIPreset> KPIPresets { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Detection>(entity =>
+            {
+                entity.HasNoKey(); // Makes the entity keyless
+                entity.ToTable("Detections");
+            });
+        }
+
     }
 }

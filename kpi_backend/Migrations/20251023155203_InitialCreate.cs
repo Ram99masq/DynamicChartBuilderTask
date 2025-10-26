@@ -42,11 +42,10 @@ namespace kpi_backend.Migrations
                     Filters = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GroupBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ChartType = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_KPIPresets", x => x.Id);
-                });
+                }
+                );
+
+       
         }
 
         /// <inheritdoc />
@@ -57,6 +56,8 @@ namespace kpi_backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "KPIPresets");
+
+          
         }
     }
 }
