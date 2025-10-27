@@ -61,9 +61,22 @@ dotnet ef database update
   b) You’ve installed the EF CLI:
 dotnet tool install --global dotnet-ef
 
+  c) run this command for the Test project.
+dotnet add package Microsoft.EntityFrameworkCore.InMemory
+dotnet add package CsvHelper
+dotnet add package Moq
 
 5) Running the Backend application using command line 
 dotnet run  
 (or)
 Visual studio --> Goto Run & debug menu and click to Launch the project code with Chrome or other browsers.
+(or) Run --> Start debugging the code
+
+
+6) Running the UnitTest for Backend application using command line or Visual studio  to see the test window results
+
+dotnet test
+ (0r)
+
+Visual studio -->click to Test the project --> Goto Test & Run All tests to see the test window results
 (or) Run --> Start debugging the code

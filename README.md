@@ -77,6 +77,11 @@ Bash:
 dotnet ef migrations add InitialCreate
 dotnet ef database update
 
+d. run this command for the Test project.
+dotnet add package Microsoft.EntityFrameworkCore.InMemory
+dotnet add package CsvHelper
+dotnet add package Moq
+
 If using Visual Studio: Go to Tools > NuGet Package Manager > Package Manager Console and run the above commands.
 
 5. Run the Backend Application
@@ -87,6 +92,14 @@ dotnet run
 b. Using Visual Studio
 Go to Run \& Debug, then click to launch the project in Chrome or your preferred browser.
 
+
+6. Running the UnitTest for Backend application using command line or Visual studio  to see the test window results
+
+dotnet test
+ (0r)
+
+Visual studio -->click to Test the project --> Goto Test & Run All tests to see the test window results
+(or) Run --> Start debugging the code
 
 
 ------------------------------------------------------------------------------------------------------------------------------

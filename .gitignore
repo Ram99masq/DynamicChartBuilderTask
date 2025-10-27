@@ -3,3 +3,5 @@
 ################################################################################
 
 /kpi-dashboard-ui/.vscode/launch.json
+/kpi_UnitTest/bin/Debug/net8.0
+/kpi_UnitTest/obj
