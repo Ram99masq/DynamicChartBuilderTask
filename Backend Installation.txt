@@ -1,4 +1,28 @@
-1) Open up the project in the VS code 
+1)  Sqlserver Database 
+please restore the Database from backup file at folder ./SQL Scripts/KPIDashboard.bak backfile. I have also added all the scripts for storedprocedure and input parameters in the Sql Scripts folder. Please find the API-Helper-Endpoints.docx  for REST API endpoint inputs and output of Json.Alternative we can use the sql backup file to restore the database.
+
+Note: please provide the database name as KPIDashboard since the entity framework used it to avoid DB migration and code issues.
+
+Sql Restore command:
+RESTORE DATABASE [KPIDashboard]
+FROM DISK = 'C:\Backup\KPIDashboard.bak'
+WITH MOVE 'KPIDashboard_Data' TO 'C:\SQLData\KPIDashboard.mdf',
+     MOVE 'KPIDashboard_Log' TO 'C:\SQLData\KPIDashboard.ldf',
+     REPLACE;
+
+Additional we can restore manually using sql server management studio. Here are the below steps to restore the Database.
+
+  1) Open SSMS 
+
+  2) Right-click Databases → Restore Database
+
+  3) Choose Device → Browse to the .bak file
+
+  4) Let SSMS auto-fill logical file names and paths
+
+  5) Click OK to restore
+
+ 
 
 2) Change the Connectionstring on appsettings.json using Username/password or Windows authentication
 
@@ -26,11 +50,20 @@ dotnet tool install --global dotnet-ef
 b. Install the packages
 dotnet add package Microsoft.EntityFrameworkCore.Design --version 9.0.10
 
-c. Create the table using entity framework and update the database.
+c. Create the table using entity framework and update the database using the Terminal / Command Line  or Visual Studio Package Manager or If you're using Visual Studio Code, Rider, or any other IDE:
+
+Run EF commands like:
+  a) Open your terminal in the project root  (or ) Visual Studio ---> Open Tools > NuGet Package Manager > Package Manager Console
+Run EF CLI commands:
 dotnet ef migrations add InitialCreate
 dotnet ef database update
 
-5) Running the Backend application 
+  b) You’ve installed the EF CLI:
+dotnet tool install --global dotnet-ef
+
+
+5) Running the Backend application using command line 
 dotnet run  
 (or)
-Goto Run & debug menu and click to Launch the project code with Chrome or other browsers.
+Visual studio --> Goto Run & debug menu and click to Launch the project code with Chrome or other browsers.
+(or) Run --> Start debugging the code

@@ -1,24 +1,8 @@
-/****** Script for SelectTopNRows command from SSMS  ******/
-SELECT TOP (1000) [Id]
-      ,[Class]
-      ,[X]
-      ,[Y]
-      ,[Timestamp]
-      ,[Speed]
-      ,[Heading]
-      ,[Vest]
-      ,[Zone]
-      ,[EventType]
-  FROM [KPIDashboard].[dbo].[Detections]
-
-  --truncate table [KPIDashboard].[dbo].[Detections]
-
-
 
   INSERT INTO [KPIDashboard].[dbo].[Detections] ([Id], [Class], [X], [Y], [Timestamp], [Speed], [Heading], [Vest], [Zone], [EventType])
 VALUES
 -- Close calls
-('H001', 'human', 12.5, 8.3, '2025-10-26 08:05', 1.2, 90, 0, 'ZoneA', 'CloseCall'),
+('H001', 'human', 12.5, 8.3, '2025-10-26 08:05', 1.2, 90, 0, 'ZoneA', 'CloseCallzzzz'),
 ('V001', 'vehicle', 12.6, 8.4, '2025-10-26 08:05', 3.5, 95, 1, 'ZoneA', 'CloseCall'),
 ('H002', 'human', 14.1, 9.0, '2025-10-26 09:15', 1.0, 180, 0, 'ZoneB', 'CloseCall'),
 ('V002', 'vehicle', 14.2, 9.1, '2025-10-26 09:15', 4.8, 185, 1, 'ZoneB', 'CloseCall'),
