@@ -24,7 +24,7 @@ Additional we can restore manually using sql server management studio. Here are 
 
  
 
-2) Change the Connectionstring on appsettings.json using Username/password or Windows authentication
+2) Change the Connectionstring on appsettings.json using Username/password or Windows authentication. I have included the appsettings.json and appsettings.Development.json for reference to the current folder.
 
   a. Using Username and password for connecting to Database
  "ConnectionStrings": {

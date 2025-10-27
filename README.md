@@ -38,7 +38,7 @@ Additional we can restore manually using sql server management studio. Here are 
  
 
 
-2. Update Connection String in appsettings.json
+2. Update Connection String in appsettings.json authentication. I have included the appsettings.json and appsettings.Development.json for reference to the current folder.
 
 a. SQL Authentication
 json:
