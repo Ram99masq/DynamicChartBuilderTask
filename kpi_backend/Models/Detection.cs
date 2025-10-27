@@ -1,4 +1,5 @@
 ﻿using CsvHelper.Configuration;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.Eventing.Reader;
 
@@ -6,6 +7,8 @@ namespace kpi_backend.Models
 {
     public class Detection
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid RowId { get; set; }
         public string Id { get; set; }
         public string Class { get; set; }
