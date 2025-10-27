@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Paper,
+  Typography,
+  Button,
+  Divider,
+  Stack
+} from "@mui/material";
 import MetricPicker from "./MetricPicker";
 import FilterPanel from "./FilterPanel";
 import GroupBySelector from "./GroupBySelector";
@@ -12,14 +20,15 @@ import EventDataTable from "./EventDataTable";
 import VestViolation from "./charts/VestViolations";
 import OverspeedingChart from "./charts/OverSpeedingChart";
 import CloseCallChart from "./charts/CloseCallChart";
+import UploadCSV from "./UploadCSV";
 
 function KPIBuilder() {
   const [name, setName] = useState("Custom KPI");
   const [metric, setMetric] = useState("count");
   const [filters, setFilters] = useState({
     time_range: {
-      start: "2023-10-01T08:00:00",
-      end: "2023-10-01T09:00:00"
+      start: "2025-01-01T08:00:00",
+      end: "2026-10-01T09:00:00"
     },
     class: [],
     zone: [],
@@ -54,50 +63,88 @@ function KPIBuilder() {
 
   const renderCharts = () => {
     if (!data || typeof data !== "object" || Object.keys(data).length === 0) {
-     return <Typography>No data available.</Typography>;
+      return <Typography>No data available.</Typography>;
     }
 
-
     return (
-      <>
-        <CloseCallChart data={data} chartType={chartType} />
-        <OverspeedingChart data={data} chartType={chartType} />
-        <DwellTimeChart data={data} chartType={chartType} />
-        <RiskyAreaChart data={data} chartType={chartType} />
-        <VestViolation data={data} chartType={chartType} />
-      </>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <CloseCallChart data={data} chartType={chartType} />
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <OverspeedingChart data={data} chartType={chartType} />
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <DwellTimeChart data={data} chartType={chartType} />
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <RiskyAreaChart data={data} chartType={chartType} />
+          </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <VestViolation data={data} chartType={chartType} />
+          </Paper>
+        </Grid>
+      </Grid>
     );
   };
 
   return (
-    <Box sx={{ mt: 4 }}>
-      <MetricPicker metric={metric} setMetric={setMetric} />
-      <FilterPanel filters={filters} setFilters={setFilters} />
-      <GroupBySelector groupBy={groupBy} setGroupBy={setGroupBy} />
-      <ChartTypeSelector chartType={chartType} setChartType={setChartType} />
-      <Button variant="contained" onClick={handleGenerate}>
-        Generate KPI
-      </Button>
+    <Box sx={{ p: 4 }}>
+      <Typography variant="h6" gutterBottom>
+        KPI Dashboard
+      </Typography>
 
-      <Box sx={{ mt: 4 }}>
+      <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
+        <Divider sx={{ mb: 2 }} />
+        <Stack spacing={2}>
+            <UploadCSV />
+              <Divider sx={{ mb: 2 }} />
+      <Typography variant="h6" gutterBottom>
+        Generate KPI Dashboard
+      </Typography>
+          <MetricPicker metric={metric} setMetric={setMetric} />
+          <FilterPanel filters={filters} setFilters={setFilters} />
+          <GroupBySelector groupBy={groupBy} setGroupBy={setGroupBy} />
+          <ChartTypeSelector chartType={chartType} setChartType={setChartType} />
+          <Button variant="contained" onClick={handleGenerate}>
+            Generate KPI
+          </Button>
+        </Stack>
+      </Paper>
+
+      <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <EventDataTable data={data} />
-      </Box>
+      </Paper>
 
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h6">KPI Visualization</Typography>
+      <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          KPI Visualization
+        </Typography>
+        <Divider sx={{ mb: 2 }} />
         {renderCharts()}
-      </Box>
+      </Paper>
 
-      <SavePresetPanel
-        currentPayload={{
-          name,
-          metric,
-          filters,
-          group_by: groupBy,
-          bucket_interval_minutes: bucketIntervalMinutes,
-          chart_type: chartType
-        }}
-      />
+      <Paper elevation={2} sx={{ p: 3 }}>
+        <SavePresetPanel
+          currentPayload={{
+            name,
+            metric,
+            filters,
+            group_by: groupBy,
+            bucket_interval_minutes: bucketIntervalMinutes,
+            chart_type: chartType
+          }}
+        />
+      </Paper>
     </Box>
   );
 }

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Container, Typography } from "@mui/material";
-import UploadCSV from "./components/UploadCSV";
 import KPIBuilder from "./components/KPIBuilder";
-import api from  "./components/api";
+import api from "./components/api";
+import HomePage from "./components/HomePage";
 
 function App() {
   const [currentKPI, setCurrentKPI] = useState(null);
@@ -20,12 +20,8 @@ function App() {
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Industrial KPI Dashboard
-      </Typography>
-      <UploadCSV />
-      <KPIBuilder onGenerate={fetchKPI} kpiData={kpiData} />
+    <Container maxWidth="xl" sx={{ mt: 4 }}>
+      <HomePage onGenerate={fetchKPI} kpiData={kpiData}/>
     </Container>
   );
 }

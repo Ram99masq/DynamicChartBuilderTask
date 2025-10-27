@@ -1,0 +1,3 @@
+id,class,x,y,timestamp,speed,heading,vest,zone,event_type
+VSSDF001,human,12.5,8.3,2025-10-26T08:00:00,5,90,1,ZoneC,close_call
+VSSDF001,human,15,9,2025-10-26T08:00:01,5,270,1,ZoneC,close_call
