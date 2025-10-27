@@ -28,7 +28,7 @@ function KPIBuilder() {
   const [filters, setFilters] = useState({
     time_range: {
       start: "2025-01-01T08:00:00",
-      end: "2026-10-01T09:00:00"
+      end: "2025-10-28T09:00:00"
     },
     class: [],
     zone: [],
@@ -68,32 +68,22 @@ function KPIBuilder() {
 
     return (
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <CloseCallChart data={data} chartType={chartType} />
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <OverspeedingChart data={data} chartType={chartType} />
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <DwellTimeChart data={data} chartType={chartType} />
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <RiskyAreaChart data={data} chartType={chartType} />
-          </Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <VestViolation data={data} chartType={chartType} />
-          </Paper>
-        </Grid>
-      </Grid>
+            <Grid item xs={12} md={6}>
+              <CloseCallChart data={data} chartType={chartType} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <VestViolation data={data} chartType={chartType} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <DwellTimeChart data={data} chartType={chartType} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <RiskyAreaChart data={data} chartType={chartType} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <OverspeedingChart data={data} chartType={chartType} />
+            </Grid>
+          </Grid>
     );
   };
 

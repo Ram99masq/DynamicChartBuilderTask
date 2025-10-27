@@ -10,6 +10,9 @@ npm install chartjs-adapter-date-fns
 
 npm install chart.js date-fns
 
+npm install @mui/icons-material
+
+
 
 2) Run the frontend application
 

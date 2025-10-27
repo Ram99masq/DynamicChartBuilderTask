@@ -1,84 +1,197 @@
-import React from "react";
-import { Bar } from "react-chartjs-2";
+import React, { useMemo, useRef, useState } from "react";
 import {
   Chart as ChartJS,
   BarElement,
+  LineElement,
   CategoryScale,
   LinearScale,
+  PointElement,
   Tooltip,
   Legend
 } from "chart.js";
+import { Bar, Line } from "react-chartjs-2";
+import {
+  Paper,
+  Typography,
+  Divider,
+  Box,
+  Stack,
+  FormControl,
+  Select,
+  MenuItem,
+  IconButton,
+  Tooltip as MuiTooltip
+} from "@mui/material";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import DownloadIcon from "@mui/icons-material/Download";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import ShowChartIcon from "@mui/icons-material/ShowChart";
 
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+ChartJS.register(
+  BarElement,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip,
+  Legend
+);
 
 function VestViolationChart({ data }) {
-  const vestViolationData= Array.isArray(data?.vestViolations) ? data.vestViolations : [];
+  const chartRef = useRef();
+  const [selectedZone, setSelectedZone] = useState("All");
+  const [selectedClass, setSelectedClass] = useState("All");
+  const [chartType, setChartType] = useState("bar");
 
-  // Extract unique zones and classes
-  const zones = [...new Set(vestViolationData.map(d => d.zone ?? "Unknown"))];
-  const classes = [...new Set(vestViolationData.map(d => d.class ?? "Unknown"))];
+  const vestViolationData = Array.isArray(data?.vestViolations) ? data.vestViolations : [];
 
-  // Build datasets per class
-  const datasets = classes.map(cls => {
-    const classData = zones.map(zone => {
+  const zones = useMemo(() => [...new Set(vestViolationData.map(d => d.zone ?? "Unknown"))], [vestViolationData]);
+  const classes = useMemo(() => [...new Set(vestViolationData.map(d => d.class ?? "Unknown"))], [vestViolationData]);
+
+  const filteredZones = selectedZone === "All" ? zones : [selectedZone];
+  const filteredClasses = selectedClass === "All" ? classes : [selectedClass];
+
+  const datasets = filteredClasses.map(cls => {
+    const classData = filteredZones.map(zone => {
       const match = vestViolationData.find(d => d.zone === zone && d.class === cls);
       return match?.count ?? 0;
     });
 
+    const colors = {
+      human: { bg: "rgba(54, 162, 235, 0.6)", border: "rgba(54, 162, 235, 1)" },
+      vehicle: { bg: "rgba(255, 99, 132, 0.6)", border: "rgba(255, 99, 132, 1)" },
+      other: { bg: "rgba(255, 206, 86, 0.6)", border: "rgba(255, 206, 86, 1)" }
+    };
+
+    const color = colors[cls] || colors.other;
+
     return {
       label: cls,
       data: classData,
-      backgroundColor:
-        cls === "human"
-          ? "rgba(54, 162, 235, 0.6)"
-          : cls === "vehicle"
-          ? "rgba(255, 99, 132, 0.6)"
-          : "rgba(255, 206, 86, 0.6)",
-      borderColor:
-        cls === "human"
-          ? "rgba(54, 162, 235, 1)"
-          : cls === "vehicle"
-          ? "rgba(255, 99, 132, 1)"
-          : "rgba(255, 206, 86, 1)",
-      borderWidth: 1
+      backgroundColor: color.bg,
+      borderColor: color.border,
+      borderWidth: 1,
+      fill: chartType === "line" ? false : true,
+      tension: 0.3
     };
   });
 
   const chartData = {
-    labels: zones,
+    labels: filteredZones,
     datasets
   };
 
   const options = {
     responsive: true,
+    animation: {
+      duration: 600,
+      easing: "easeOutCubic"
+    },
     plugins: {
-      legend: { position: "top" },
+      legend: {
+        position: "top",
+        labels: { boxWidth: 12, font: { size: 12 } }
+      },
       tooltip: {
         callbacks: {
           label: context => {
-            return `${context.dataset.label}: ${context.raw} in ${context.label}`;
+            return `${context.dataset.label}: ${context.raw} violations in ${context.label}`;
           }
         }
       }
     },
     scales: {
       x: {
-        stacked: true,
-        title: { display: true, text: "Zone" }
+        stacked: chartType === "bar",
+        title: {
+          display: true,
+          text: "Zone",
+          font: { size: 12 }
+        }
       },
       y: {
-        stacked: true,
+        stacked: chartType === "bar",
         beginAtZero: true,
-        title: { display: true, text: "Violation Count" }
+        title: {
+          display: true,
+          text: "Violation Count",
+          font: { size: 12 }
+        }
       }
     }
   };
 
+  const handleExport = () => {
+    const chart = chartRef.current;
+    if (chart) {
+      const link = document.createElement("a");
+      link.href = chart.toBase64Image();
+      link.download = `vest_violation_chart_${chartType}.png`;
+      link.click();
+    }
+  };
+
   return (
-    <div>
-      <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>Vest Violations by Zone and Class</h2>
-      <Bar data={chartData} options={options} />
-    </div>
+    <Paper elevation={2} sx={{ p: 3 }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+        <Typography variant="subtitle1" fontWeight={600}>
+          Vest Violations by Zone and Class
+        </Typography>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <FormControl size="small" sx={{ minWidth: 140 }}>
+            <Select
+              value={selectedZone}
+              onChange={(e) => setSelectedZone(e.target.value)}
+              startAdornment={<FilterAltIcon fontSize="small" sx={{ mr: 1 }} />}
+            >
+              <MenuItem value="All">All Zones</MenuItem>
+              {zones.map((zone) => (
+                <MenuItem key={zone} value={zone}>
+                  {zone}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl size="small" sx={{ minWidth: 140 }}>
+            <Select
+              value={selectedClass}
+              onChange={(e) => setSelectedClass(e.target.value)}
+              startAdornment={<FilterAltIcon fontSize="small" sx={{ mr: 1 }} />}
+            >
+              <MenuItem value="All">All Classes</MenuItem>
+              {classes.map((cls) => (
+                <MenuItem key={cls} value={cls}>
+                  {cls}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <MuiTooltip title="Toggle chart type">
+            <IconButton onClick={() => setChartType(chartType === "bar" ? "line" : "bar")}>
+              {chartType === "bar" ? <ShowChartIcon /> : <BarChartIcon />}
+            </IconButton>
+          </MuiTooltip>
+
+          <MuiTooltip title="Export chart as PNG">
+            <IconButton onClick={handleExport}>
+              <DownloadIcon />
+            </IconButton>
+          </MuiTooltip>
+        </Stack>
+      </Stack>
+
+      <Divider sx={{ mb: 2 }} />
+
+      <Box sx={{ height: { xs: 260, md: 340 } }}>
+        {chartType === "bar" ? (
+          <Bar ref={chartRef} data={chartData} options={options} />
+        ) : (
+          <Line ref={chartRef} data={chartData} options={options} />
+        )}
+      </Box>
+    </Paper>
   );
 }
 
