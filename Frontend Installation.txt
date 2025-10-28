@@ -12,7 +12,14 @@ npm install chart.js date-fns
 
 npm install @mui/icons-material
 
+2) Modify the Base url in api.js and replace the https://localhost:7122 url here.
 
-2) Run the frontend application
+const api = axios.create({
+  baseURL: "https://localhost:7122/api/kpi",
+});
+
+
+
+3) Run the frontend application
 
 NPM start

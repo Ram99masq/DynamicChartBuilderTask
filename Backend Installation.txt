@@ -24,7 +24,16 @@ Additional we can restore manually using sql server management studio. Here are 
 
  
 
-2) Change the Connectionstring on appsettings.json using Username/password or Windows authentication. I have included the appsettings.json and appsettings.Development.json for reference to the current folder.
+2) Change the Connectionstring  and Cors-AllowedOrigins  on appsettings.json using Username/password or Windows authentication. I have included the appsettings.json and appsettings.Development.json for reference to the current folder.
+
+1) Change / modify the cors url of the front react js url. For example change the http://localhost:3000 and "https://localhost:3000"
+
+"Cors": {
+  "AllowedOrigins": [
+    "http://localhost:3000",
+    "https://localhost:3000"
+  ]
+},
 
   a. Using Username and password for connecting to Database
  "ConnectionStrings": {

@@ -38,8 +38,18 @@ Additional we can restore manually using sql server management studio. Here are 
  
 
 
-2. Update Connection String in appsettings.json authentication. I have included the appsettings.json and appsettings.Development.json for reference to the current folder.
+2. Update Connection String and Cors-AllowedOrigins  in appsettings.json authentication. I have included the appsettings.json and appsettings.Development.json for reference to the current folder.
 
+1) Change / modify the cors url of the front react js url. For example change the http://localhost:3000 and "https://localhost:3000"
+
+"Cors": {
+  "AllowedOrigins": [
+    "http://localhost:3000",
+    "https://localhost:3000"
+  ]
+},
+
+2) Connection String  for 
 a. SQL Authentication
 json:
 "ConnectionStrings": {
@@ -84,6 +94,7 @@ dotnet add package Moq
 
 If using Visual Studio: Go to Tools > NuGet Package Manager > Package Manager Console and run the above commands.
 
+
 5. Run the Backend Application
 a. Using Command Line
 
@@ -121,6 +132,12 @@ This guide outlines the steps to install dependencies and run the React-based fr
 
 Use the following commands to install all necessary React, Chart.js, and Material UI dependencies.
 
+
+\## 2) Modify the Base url in api.js and replace the https://localhost:7122 url here.
+
+const api = axios.create({
+  baseURL: "https://localhost:7122/api/kpi",
+});
 
 
 \### 🧱 Core UI and Charting Libraries
