@@ -50,6 +50,7 @@ Additional we can restore manually using sql server management studio. Here are 
 },
 
 2) Connection String  for 
+
 a. SQL Authentication
 json:
 "ConnectionStrings": {
